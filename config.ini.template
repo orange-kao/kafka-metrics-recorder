@@ -4,6 +4,7 @@ port = 12697
 ca_file = kafka-ca
 cert_file= kafka-cert
 key_file = kafka-key
+topic = metrics
 
 [pg]
 host = pg-xxxxx-xxxx.aivencloud.com
@@ -12,4 +13,7 @@ user = avnadmin
 password = xxxxxxxxxxxxxxxx
 ca_file = pg-ca
 database = defaultdb
+
+[metric]
+mount_point = /
 
