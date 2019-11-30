@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
 import configparser
+import socket
+import time
+
 from linux_metrics import cpu_stat
 from linux_metrics import disk_stat
 from kafka import KafkaProducer
@@ -9,8 +12,6 @@ from kafka.admin import KafkaAdminClient
 from kafka.admin import NewTopic
 from kafka.errors import TopicAlreadyExistsError
 import psycopg2
-import socket
-import time
 
 def print_config(config):
     print("Kafka host: %s" % config["kafka"]["host"])
@@ -29,21 +30,31 @@ def print_config(config):
 def kafka_generate_connection_config(config):
     kafka_config = {}
     # https://kafka-python.readthedocs.io/en/master/apidoc/modules.html
-    kafka_config['bootstrap_servers'] = config["kafka"]["host"] + ":" + config["kafka"]["port"]
+    kafka_config['bootstrap_servers'] = config["kafka"]["host"] + \
+                                        ":" + config["kafka"]["port"]
     kafka_config['security_protocol'] = "SSL"
     kafka_config['ssl_cafile'] = config["kafka"]["ca_file"]
     kafka_config['ssl_certfile'] = config["kafka"]["cert_file"]
     kafka_config['ssl_keyfile'] = config["kafka"]["key_file"]
 
     # At least
-    #   * specify api_version
+    #   * specify api_version - won't work without pull-request
+    #       https://github.com/dpkp/kafka-python/pull/1953
     #   OR
-    #   * specify api_version_auto_timeout_ms with a large enough value (2000 ms default may not enough)
-    # Otherwise kafka.errors.NoBrokersAvailable exception is possible under high latency link
+    #   * specify api_version_auto_timeout_ms
+    #       with a large enough value (2000 ms default may not enough)
+    # Otherwise kafka.errors.NoBrokersAvailable exception is possible
+    # under high latency link
 
-    # Root cause:
-    #   * It use fixed timeout for API version test, does not take TCP 3-way handshak and TLS establishment time into account, and does not aware the TCP segment is still being transmitted (ongoing connection), thus doesn't adapt high latency connection well
-    #   * bug in the library, 1074 ms from TCP SYN (first message of TCP 3-way handshaking) to FIN (cutting connection), which is less than 2000 ms
+    # Specify api_version_auto_timeout_ms need to be increased because
+    #   * It use fixed timeout for API version test, does not take TCP
+    #     3-way handshak and TLS establishment time into account, and
+    #     does not aware the TCP segment is still being transmitted
+    #     (ongoing connection), thus doesn't adapt high latency
+    #      connection well
+    #   * Bug in the library, 1074 ms from TCP SYN (first message of TCP
+    #     3-way handshaking) to FIN (cutting connection), which is less
+    #     than 2000 ms
 
     # Sniff looks like this
     # Time         Src            Dst            Proto    Info
@@ -57,15 +68,21 @@ def kafka_generate_connection_config(config):
     # 1.237261544  10.0.0.1       35.201.23.103  TCP      [RST]
     # 1.237445431  35.201.23.103       10.0.0.1  TCP      [ACK]
     # 1.237459685  10.0.0.1       35.201.23.103  TCP      [RST]
-    # 1.249931364  35.201.23.103       10.0.0.1  TLSv1.2  Server Hello, Certificate, Server Key Exchange, Certificate Request, Server Hello Done
+    # 1.249931364  35.201.23.103       10.0.0.1  TLSv1.2  Server Hello,
+    #                                              Certificate,
+    #                                              Server Key Exchange,
+    #                                              Certificate Request,
+    #                                              Server Hello Done
     # 1.249971500  10.0.0.1       35.201.23.103  TCP      [RST]
     # 1.439006072  35.201.23.103       10.0.0.1  TCP      [FIN, ACK]
     # 1.439029718  10.0.0.1       35.201.23.103  TCP      [RST]
 
+#    kafka_config['api_version'] = (1,0,0)
+    # not work on kafka-python 1.4.7 unless PR 1953 has been accepted
+    # https://github.com/dpkp/kafka-python/pull/1953
 
-    # after TCP 3-way-handshaking and Client Hello, the library will cut connection
-#    kafka_config['api_version'] = 
-    kafka_config['api_version_auto_timeout_ms'] = 5000
+
+    kafka_config['api_version_auto_timeout_ms'] = 10_000
     return kafka_config
 
 def pg_generate_connection_config(config):
@@ -83,7 +100,8 @@ def pg_generate_connection_config(config):
 def kafka_create_topic(kafka_config, config):
     kafka_admin = KafkaAdminClient(**kafka_config)
     topic_list = []
-    topic_list.append(NewTopic(name=config["kafka"]["topic"], num_partitions=1, replication_factor=1))
+    topic_list.append(NewTopic( name=config["kafka"]["topic"],
+                                num_partitions=1, replication_factor=1 ))
     try:
         kafka_admin.create_topics(topic_list)
         print("Topic created successfully")
@@ -101,9 +119,14 @@ def pg_create_table(pg_cur):
     # hostname 63 char max. FQDN 253 char max
     # http://man7.org/linux/man-pages/man7/hostname.7.html
 
-    # Postgres date type 'integer': up to 2147483647, which will be problemmatic in A.D. 2038
-    # Postgres date type 'bigint': up to 9223372036854775807, which will be problemmatic in A.D. 292277026596
-    # Postgres date type 'timestamp': 4713 BC to 294276 AD, 1 microsecond resolution
+    # Postgres date type 'integer' as epoch date:
+    #       up to 2147483647,
+    #       which will be problemmatic in A.D. 2038
+    # Postgres date type 'bigint' as epoch date:
+    #       up to 9223372036854775807,
+    #       which will be problemmatic in A.D. 292277026596
+    # Postgres date type 'timestamp':
+    #       4713 BC to 294276 AD, 1 microsecond resolution
 
     # Postgres date type 'real': IEEE 754 single precision
     # https://www.postgresql.org/docs/current/datatype-numeric.html
@@ -135,7 +158,9 @@ def metric_collect():
 
     print("CPU usage: %f" % cpu_usage)
     print("Disk usage: %f %%" % disk_usage)
-    return {"hostname":hostname, "cpu_usage":cpu_usage, "disk_usage":disk_usage}
+    return {"hostname":hostname,
+            "cpu_usage":cpu_usage,
+            "disk_usage":disk_usage}
 
 
 config = configparser.ConfigParser()
@@ -163,7 +188,9 @@ pg_con.close()
 kafka_producer.send(config["kafka"]["topic"], b"message")
 kafka_producer.flush()
 
-kafka_consumer.topics() # https://github.com/dpkp/kafka-python/issues/601
+kafka_consumer.topics()  # Workaround for kafka-python issue 601
+# https://github.com/dpkp/kafka-python/issues/601
+
 kafka_consumer.seek_to_beginning()
 kafka_consumer.subscribe([config["kafka"]["topic"]])
 
