@@ -18,12 +18,11 @@ lazyconfig.print_config(config)
 kafka_instance = lazykafka.LazyKafka(config)
 kafka_consumer = kafka_instance.create_consumer( config["kafka"]["topic"] )
 
-pg_config = lazypg.generate_connection_config(config)
-pg_con = psycopg2.connect(**pg_config)
-lazypg.drop_table(pg_con)
-lazypg.create_table(pg_con)
-pg_con.commit()
-pg_con.close()
+pg_instance = lazypg.LazyPg(config)
+#pg_instance.drop_table()
+pg_instance.create_table()
+pg_instance.con.commit()
+pg_instance.con.close()
 
 kafka_consumer.topics()  # Workaround for kafka-python issue 601
 # https://github.com/dpkp/kafka-python/issues/601

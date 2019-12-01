@@ -9,19 +9,19 @@ from kafka.errors import UnknownTopicOrPartitionError
 
 class LazyKafka:
     def __init__(self, config):
-        self.kafka_config = self.generate_connection_config(config)
         self.config = config["kafka"]
+        self.kafka_config = self.generate_connection_config(config["kafka"])
 
     @staticmethod
     def generate_connection_config(config):
         kafka_config = {}
         # https://kafka-python.readthedocs.io/en/master/apidoc/modules.html
-        kafka_config['bootstrap_servers'] = config["kafka"]["host"] + \
-                                            ":" + config["kafka"]["port"]
+        kafka_config['bootstrap_servers'] = config["host"] + \
+                                            ":" + config["port"]
         kafka_config['security_protocol'] = "SSL"
-        kafka_config['ssl_cafile'] = config["kafka"]["ca_file"]
-        kafka_config['ssl_certfile'] = config["kafka"]["cert_file"]
-        kafka_config['ssl_keyfile'] = config["kafka"]["key_file"]
+        kafka_config['ssl_cafile'] = config["ca_file"]
+        kafka_config['ssl_certfile'] = config["cert_file"]
+        kafka_config['ssl_keyfile'] = config["key_file"]
 
         # At least specify one of the following
         #   * api_version - won't work without pull-request
