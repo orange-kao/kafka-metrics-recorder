@@ -3,28 +3,24 @@
 import configparser
 import json
 
-from kafka import KafkaProducer
 from kafka import KafkaConsumer
-from kafka.admin import KafkaAdminClient
-from kafka.admin import NewTopic
-from kafka.errors import TopicAlreadyExistsError
 import psycopg2
 
+import lazyconfig
+import lazymetrics
 import lazykafka
 import lazypg
-import lazymetrics
-import lazyconfig
 
 config = configparser.ConfigParser()
 config.read('config.ini')  # everything will be string
 lazyconfig.print_config(config)
 
-kafka_config = lazykafka.generate_connection_config(config)
-kafka_consumer = KafkaConsumer(config["kafka"]["topic"], **kafka_config)
+kafka_instance = lazykafka.LazyKafka(config)
+kafka_consumer = kafka_instance.create_consumer( config["kafka"]["topic"] )
 
 pg_config = lazypg.generate_connection_config(config)
 pg_con = psycopg2.connect(**pg_config)
-#lazypg.drop_table(pg_con)
+lazypg.drop_table(pg_con)
 lazypg.create_table(pg_con)
 pg_con.commit()
 pg_con.close()
@@ -36,7 +32,8 @@ kafka_consumer.seek_to_beginning()
 kafka_consumer.subscribe([config["kafka"]["topic"]])
 
 for msg in kafka_consumer:
-    print(json.loads(msg.value.decode()))
+#    print(json.loads(msg.value.decode()))
+    print(lazymetrics.LazyMetrics.bytes_to_dict(msg.value))
 
 kafka_consumer.close()
 

@@ -1,10 +1,19 @@
 [kafka]
+
+# required for connection
 host = kafka-xxxxx-xxxx.aivencloud.com
 port = 12697
 ca_file = kafka-ca
 cert_file= kafka-cert
 key_file = kafka-key
+
+# topic name
 topic = metrics
+
+# only used when creating a new topic
+num_partitions = 1
+replication_factor = 3
+
 
 [pg]
 host = pg-xxxxx-xxxx.aivencloud.com
@@ -14,6 +23,12 @@ password = xxxxxxxxxxxxxxxx
 ca_file = pg-ca
 database = defaultdb
 
-[metric]
+
+[metrics]
+
+# How many seconds between each metrics report
+report_frequency = 1
+
+# Disk usage report
 mount_point = /
 
