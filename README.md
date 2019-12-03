@@ -39,7 +39,8 @@ pytest-3
 ## TODO
 - systemd/init.d script to run producer or consumer on boot
 - Integration with Travis CI
-- Test case reading from PostgreSQL
+- Test case reading from PostgreSQL - to validate the result
+- Package as PIP for easy distribution
 
 ## Example
 ```
