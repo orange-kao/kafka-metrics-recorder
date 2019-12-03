@@ -8,3 +8,6 @@ pip3 install kafka-python
 sudo apt-get -y install libpq-dev
 pip3 install psycopg2
 
+# Development use
+# sudo apt install postgresql-client
+

@@ -12,6 +12,10 @@ class LazyKafka:
         self.config = config["kafka"]
         self.kafka_config = self.generate_connection_config(config["kafka"])
 
+    def close(self):
+        self.config = None
+        self.kafka_config = None
+
     @staticmethod
     def generate_connection_config(config):
         kafka_config = {}
@@ -24,22 +28,25 @@ class LazyKafka:
         kafka_config['ssl_keyfile'] = config["key_file"]
 
         # At least specify one of the following
-        #   * api_version - won't work without pull-request
+        #   * api_version - won't work on kafka-python 1.4.7 unless the
+        #       following pull-request has been included
         #       https://github.com/dpkp/kafka-python/pull/1953
         #   * api_version_auto_timeout_ms
-        #       with a large enough value (2000 ms default may not enough)
-        # Otherwise kafka.errors.NoBrokersAvailable exception is possible
-        # under high latency network connection
+        #       with a large enough value (2000 ms default may not
+        #       enough)
+        # Otherwise kafka.errors.NoBrokersAvailable exception is
+        # possible under high latency network connection
 
-        # Specify api_version_auto_timeout_ms need to be increased because
-        #   * It use fixed timeout for API version test, does not take TCP
-        #     3-way handshak and TLS establishment time into account, and
-        #     does not aware the TCP segment is still being transmitted
-        #     (ongoing connection), thus doesn't adapt high latency
-        #     connection well
-        #   * Bug in the library, 1074 ms from TCP SYN (first message of TCP
-        #     3-way handshaking) to FIN (cutting connection), which is less
-        #     than 2000 ms
+        # Specify api_version_auto_timeout_ms need to be increased
+        # because
+        #   * It use fixed timeout for API version test, does not take
+        #     TCP 3-way handshak and TLS establishment time into
+        #     account, and does not aware the TCP segment is still being
+        #     transmitted (ongoing connection), thus doesn't adapt well
+        #     with high latency connection
+        #   * Bug in the library, 1074 ms from TCP SYN (first message of
+        #     TCP 3-way handshaking) to FIN (cutting connection), which
+        #     is less than 2000 ms
 
         # Sniff looks like this
         # Time         Src            Dst            Proto    Info
@@ -63,7 +70,8 @@ class LazyKafka:
         # 1.439029718  10.0.0.1       35.201.23.103  TCP      [RST]
 
         # kafka_config['api_version'] = (1,0,0)
-        # not work on kafka-python 1.4.7 unless PR 1953 has been accepted
+        # Does not work on kafka-python 1.4.7 unless PR 1953 has been
+        # patched manually
         # https://github.com/dpkp/kafka-python/pull/1953
 
         kafka_config['api_version_auto_timeout_ms'] = 10_000
@@ -73,9 +81,8 @@ class LazyKafka:
         kafka_admin = KafkaAdminClient(**self.kafka_config)
         try:
             kafka_admin.delete_topics([topic])
-            print("Topic deleted successfully")
         except UnknownTopicOrPartitionError:
-            print("Topic does not exist")
+            pass  # Topic does not exist
 
     def create_topic(self, topic):
         kafka_admin = KafkaAdminClient(**self.kafka_config)
@@ -87,9 +94,8 @@ class LazyKafka:
             ))
         try:
             kafka_admin.create_topics(topic_list)
-            print("Topic created successfully")
         except TopicAlreadyExistsError:
-            print("Topic already exist")
+            pass  # Topic already exist
 
     def create_producer(self):
         producer = KafkaProducer(**self.kafka_config)

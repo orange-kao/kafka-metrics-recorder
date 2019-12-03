@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import configparser
-
 def print_config(config):
     print("Kafka host: %s" % config["kafka"]["host"])
     print("Kafka port: %s" % config["kafka"]["port"])
