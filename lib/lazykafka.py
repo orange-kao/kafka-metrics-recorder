@@ -27,7 +27,7 @@ class LazyKafka:
         kafka_config['ssl_certfile'] = config["cert_file"]
         kafka_config['ssl_keyfile'] = config["key_file"]
 
-        # At least specify one of the following should be specified
+        # At least one of the following should be specified
         #   * api_version - won't work on kafka-python 1.4.7 unless the
         #       following pull-request has been included
         #       https://github.com/dpkp/kafka-python/pull/1953

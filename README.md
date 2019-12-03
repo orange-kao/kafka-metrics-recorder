@@ -1,5 +1,5 @@
 # kafka-metrics-recorder
-It's a personal project to get familar with Python and Apache Kafka.
+It's a personal project to get familiar with Python and Apache Kafka.
 
 Producer
 1. Collect Linux system metrics including CPU usage, disk utilisation, load average
@@ -7,7 +7,7 @@ Producer
 
 Consumer
 1. Subscribe to Kafka topic and receive Linux system metrics
-2. Insert system metrics into PostgreSQL database
+2. Insert system metrics into the PostgreSQL database
 
 Producer and consumer can run on different machines.
 
@@ -15,9 +15,7 @@ Producer and consumer can run on different machines.
 This is tested on Ubuntu 18.04 bionic
 ```
 ./1_os_packages_install
-
 ./2_python_packages_install
-
 ./3_configure
 ```
 
@@ -26,7 +24,7 @@ This is tested on Ubuntu 18.04 bionic
 pytest-3
 ```
 
-## Runing producer
+## Running producer
 ```
 ./producer.py
 ```
@@ -37,10 +35,14 @@ pytest-3
 ```
 
 ## TODO
-- systemd/init.d script to run producer or consumer on boot
-- Integration with Travis CI
+- systemd/init.d script to run producer and/or consumer on boot
+- Run as a daemon
+- Integration with Travis CI (tried)
 - Test case reading from PostgreSQL - to validate the result
-- Package as PIP for easy distribution
+- Package as a PIP for easy distribution
+- Unable to restart itself (or log the exception message) after crash
+- After consumer restart, it will go through every record on Kafka topic. It will not result in duplicated records on PostgreSQL but it is inefficient. Record the last offset is an option.
+- Does not support Kafka partition / consumer group
 
 ## Example
 ```
