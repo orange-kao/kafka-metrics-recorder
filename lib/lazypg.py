@@ -11,6 +11,13 @@ class LazyPg:
         self.pg_config = self.generate_connection_config(config["pg"])
         self.con = psycopg2.connect(**self.pg_config)
 
+    def close(self):
+        if self.con != None:
+            self.con.close()
+        self.config = None
+        self.pg_config = None
+        self.con = None
+
     @staticmethod
     def generate_connection_config(config):
         # http://initd.org/psycopg/docs/module.html

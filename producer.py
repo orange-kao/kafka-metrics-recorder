@@ -2,16 +2,15 @@
 
 import configparser
 
-import lazyconfig
-import lazymetrics
-import lazykafka
+from lib import lazyconfig
+from lib import lazymetrics
+from lib import lazykafka
 
 config = configparser.ConfigParser()
-config.read('config.ini')  # everything will be string
+config.read('conf/config.ini')  # everything will be string
 lazyconfig.print_config(config)
 
 kafka_instance = lazykafka.LazyKafka(config)
-#kafka_instance.delete_topic( config["kafka"]["topic"] )
 kafka_instance.create_topic( config["kafka"]["topic"] )
 
 kafka_producer = kafka_instance.create_producer()

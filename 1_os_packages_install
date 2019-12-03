@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e -x
+
+sudo apt-get -y install python3-pip libpq-dev
+
+# Development use
+# sudo apt-get -y install postgresql-client python3-pytest
+

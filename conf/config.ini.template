@@ -3,9 +3,9 @@
 # required for connection
 host = kafka-xxxxx-xxxx.aivencloud.com
 port = 12697
-ca_file = kafka-ca
-cert_file= kafka-cert
-key_file = kafka-key
+ca_file = conf/kafka-ca
+cert_file = conf/kafka-cert
+key_file = conf/kafka-key
 
 # topic name
 topic = metrics
@@ -20,7 +20,7 @@ host = pg-xxxxx-xxxx.aivencloud.com
 port = 12695
 user = avnadmin
 password = xxxxxxxxxxxxxxxx
-ca_file = pg-ca
+ca_file = conf/pg-ca
 database = defaultdb
 
 

@@ -2,20 +2,19 @@
 
 import configparser
 
-import lazyconfig
-import lazymetrics
-import lazykafka
-import lazypg
+from lib import lazyconfig
+from lib import lazymetrics
+from lib import lazykafka
+from lib import lazypg
 
 config = configparser.ConfigParser()
-config.read('config.ini')  # everything will be string
+config.read('conf/config.ini')  # everything will be string
 lazyconfig.print_config(config)
 
 kafka_instance = lazykafka.LazyKafka(config)
 kafka_consumer = kafka_instance.create_consumer( config["kafka"]["topic"] )
 
 pg_instance = lazypg.LazyPg(config)
-#pg_instance.drop_table()
 pg_instance.create_table()
 
 kafka_consumer.topics()  # Workaround for kafka-python issue 601

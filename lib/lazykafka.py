@@ -83,6 +83,7 @@ class LazyKafka:
             kafka_admin.delete_topics([topic])
         except UnknownTopicOrPartitionError:
             pass  # Topic does not exist
+        kafka_admin.close()
 
     def create_topic(self, topic):
         kafka_admin = KafkaAdminClient(**self.kafka_config)
@@ -96,6 +97,7 @@ class LazyKafka:
             kafka_admin.create_topics(topic_list)
         except TopicAlreadyExistsError:
             pass  # Topic already exist
+        kafka_admin.close()
 
     def create_producer(self):
         producer = KafkaProducer(**self.kafka_config)
