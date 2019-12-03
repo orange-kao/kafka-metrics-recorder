@@ -137,19 +137,3 @@ class LazyPg:
         pg_cur.close()
         self.con.commit()
 
-    def query_metrics(self):
-        sql_template = """
-            select (
-                sys_time
-            ) from metrics;
-        """
-        pg_cur = self.con.cursor()
-        pg_cur.execute(sql_template)
-        result = pg_cur.fetchall()
-        pg_cur.close()
-        self.con.commit()
-
-        print(type(result[0][0]))
-        print(result[0][0])
-        return result
-

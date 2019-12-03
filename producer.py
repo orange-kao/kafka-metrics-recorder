@@ -8,7 +8,6 @@ from lib import lazykafka
 
 config = configparser.ConfigParser()
 config.read('conf/config.ini')  # everything will be string
-lazyconfig.print_config(config)
 
 kafka_instance = lazykafka.LazyKafka(config)
 kafka_instance.create_topic( config["kafka"]["topic"] )

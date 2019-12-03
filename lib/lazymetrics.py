@@ -32,7 +32,8 @@ class LazyMetrics:
 
         # https://pypi.org/project/linux-metrics/
         # Reading CPU usage will block for report_frequency seconds
-        cpu_util = cpu_stat.cpu_percents(float(self.config["report_frequency"]))
+        report_frequency = float(self.config["report_frequency"])
+        cpu_util = cpu_stat.cpu_percents(report_frequency)
         cpu_usage = 100 - cpu_util['idle']
 
         disk_util = disk_stat.disk_usage(self.config["mount_point"])
@@ -53,10 +54,6 @@ class LazyMetrics:
         # Timezone independent (always based on UTC time in 1970)
         sys_time_epoch = time.time()
 
-#        print("Hostname: %s" % hostname)
-#        print("CPU usage: %f" % cpu_usage)
-#        print("Disk usage: %f %%" % disk_usage)
-#        print("Uptime: %f" % uptime_seconds)
         return {"hostname":hostname,
                 "cpu_usage":cpu_usage,
                 "disk_usage":disk_usage,

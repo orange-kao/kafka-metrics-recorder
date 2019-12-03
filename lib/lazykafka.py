@@ -27,7 +27,7 @@ class LazyKafka:
         kafka_config['ssl_certfile'] = config["cert_file"]
         kafka_config['ssl_keyfile'] = config["key_file"]
 
-        # At least specify one of the following
+        # At least specify one of the following should be specified
         #   * api_version - won't work on kafka-python 1.4.7 unless the
         #       following pull-request has been included
         #       https://github.com/dpkp/kafka-python/pull/1953
@@ -37,16 +37,15 @@ class LazyKafka:
         # Otherwise kafka.errors.NoBrokersAvailable exception is
         # possible under high latency network connection
 
-        # Specify api_version_auto_timeout_ms need to be increased
-        # because
+        # 2000 ms for api_version_auto_timeout_ms may not enough because
         #   * It use fixed timeout for API version test, does not take
         #     TCP 3-way handshak and TLS establishment time into
         #     account, and does not aware the TCP segment is still being
         #     transmitted (ongoing connection), thus doesn't adapt well
         #     with high latency connection
-        #   * Bug in the library, 1074 ms from TCP SYN (first message of
-        #     TCP 3-way handshaking) to FIN (cutting connection), which
-        #     is less than 2000 ms
+        #   * Possibe bug in the library, 1074 ms from TCP SYN (first
+        #     message of TCP 3-way handshaking) to FIN (cutting
+        #     connection), which is less than 2000 ms
 
         # Sniff looks like this
         # Time         Src            Dst            Proto    Info
