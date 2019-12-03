@@ -2,6 +2,7 @@ language: python
 python:
   - "3.6"
 before_install:
+  - sudo apt-get update
   - ./1_os_packages_install
 install:
   - ./2_python_packages_install
