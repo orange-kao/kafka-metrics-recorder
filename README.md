@@ -12,6 +12,7 @@ Consumer
 Producer and consumer can run on different machines.
 
 ## Setting up
+This is tested on Ubuntu 18.04 bionic
 ```
 ./1_os_packages_install
 
