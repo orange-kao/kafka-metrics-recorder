@@ -2,9 +2,9 @@
 
 import configparser
 
-from lib import lazyconfig
-from lib import lazymetrics
-from lib import lazykafka
+from lazylib import lazyconfig
+from lazylib import lazymetrics
+from lazylib import lazykafka
 
 config = configparser.ConfigParser()
 config.read('conf/config.ini')  # everything will be string

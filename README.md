@@ -24,7 +24,7 @@ This is tested on Ubuntu 18.04 bionic
 
 ## Running tests
 ```
-pytest-3
+./4_test
 ```
 
 ## Running producer
