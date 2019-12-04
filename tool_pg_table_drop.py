@@ -2,8 +2,8 @@
 
 import configparser
 
-from lib import lazyconfig
-from lib import lazypg
+from lazylib import lazyconfig
+from lazylib import lazypg
 
 config = configparser.ConfigParser()
 config.read('conf/config.ini')  # everything will be string
