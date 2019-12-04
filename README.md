@@ -1,4 +1,7 @@
 # kafka-metrics-recorder
+
+[![Build Status](https://travis-ci.org/orange-kao/kafka-metrics-recorder.svg?branch=master)](https://travis-ci.org/orange-kao/kafka-metrics-recorder)
+
 It's a personal project to get familiar with Python and Apache Kafka.
 
 Producer
