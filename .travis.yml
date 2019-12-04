@@ -3,6 +3,10 @@ language: python
 python:
   - "3.6"
 before_install:
+  - openssl aes-256-cbc -K $encrypted_e18eeda004d8_key -iv $encrypted_e18eeda004d8_iv -in conf/.config.ini.travis-ci-enc -out conf/config.ini -d
+  - openssl aes-256-cbc -K $encrypted_e18eeda004d8_key -iv $encrypted_e18eeda004d8_iv -in conf/.ca.pem.travis-ci-enc -out conf/ca.pem -d
+  - openssl aes-256-cbc -K $encrypted_e18eeda004d8_key -iv $encrypted_e18eeda004d8_iv -in conf/.service.cert.travis-ci-enc -out conf/service.cert -d
+  - openssl aes-256-cbc -K $encrypted_e18eeda004d8_key -iv $encrypted_e18eeda004d8_iv -in conf/.service.key.travis-ci-enc -out conf/service.key -d
   - sudo apt-get update
   - ./1_os_packages_install
 install:
