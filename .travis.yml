@@ -8,4 +8,4 @@ before_install:
 install:
   - ./2_python_packages_install
 script:
-  - pytest-3
+  - ./4_test

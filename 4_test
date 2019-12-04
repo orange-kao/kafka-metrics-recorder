@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e -x
 
-pytest-3
+python3 -m pytest tests/
 

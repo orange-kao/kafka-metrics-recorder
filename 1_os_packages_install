@@ -4,5 +4,5 @@ set -e -x
 sudo apt-get -y install python3-pip libpq-dev python3-pytest
 
 # Development use
-# sudo apt-get -y install postgresql-client
+# sudo apt-get -y install postgresql-client python3-venv
 

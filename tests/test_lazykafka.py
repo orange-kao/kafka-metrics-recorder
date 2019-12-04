@@ -3,7 +3,7 @@
 import configparser
 import unittest
 
-from lib import lazykafka
+from lazylib import lazykafka
 
 class TestLazyKafka(unittest.TestCase):
 

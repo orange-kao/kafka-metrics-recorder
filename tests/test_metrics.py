@@ -3,7 +3,7 @@
 import configparser
 import unittest
 
-from lib import lazymetrics
+from lazylib import lazymetrics
 
 class TestLazyMetrics(unittest.TestCase):
 

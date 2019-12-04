@@ -3,7 +3,7 @@
 import configparser
 import unittest
 
-from lib import lazypg
+from lazylib import lazypg
 
 class TestLazyPg(unittest.TestCase):
 
