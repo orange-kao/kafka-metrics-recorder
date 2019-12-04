@@ -1,3 +1,6 @@
-/config.ini
+/conf/config.ini
+/conf/ca.pem
+/conf/service.cert
+/conf/service.key
 __pycache__/
 .*.swp
