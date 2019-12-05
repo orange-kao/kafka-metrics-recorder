@@ -19,7 +19,7 @@ while True:
     metrics_json_bytes = metrics_instance.get_bytes()
     kafka_producer.send(config["kafka"]["topic"], metrics_json_bytes)
     kafka_producer.flush()
-    print("Push to Kafka: %s" % (metrics_json_bytes,))
+    print( f"Push to Kafka: {metrics_json_bytes}" )
 
 kafka_producer.close()
 kafka_instance.close()

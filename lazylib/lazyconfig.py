@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 
 def print_config(config):
-    print("Kafka host: %s" % config["kafka"]["host"])
-    print("Kafka port: %s" % config["kafka"]["port"])
-    print("Kafka CA file: %s" % config["kafka"]["ca_file"])
-    print("Kafka cert file: %s" % config["kafka"]["cert_file"])
-    print("Kafka key file: %s" % config["kafka"]["key_file"])
-    print("Kafka topic: %s" % config["kafka"]["topic"])
+    print( f"Kafka host: {config['kafka']['host']}" )
+    print( f"Kafka port: {config['kafka']['port']}" )
+    print( f"Kafka CA file: {config['kafka']['ca_file']}" )
+    print( f"Kafka cert file: {config['kafka']['cert_file']}" )
+    print( f"Kafka key file: {config['kafka']['key_file']}" )
+    print( f"Kafka topic: {config['kafka']['topic']}" )
 
-    print("Pg host: %s" % config["pg"]["host"])
-    print("Pg port: %s" % config["pg"]["port"])
-    print("Pg user: %s" % config["pg"]["user"])
-    print("Pg password: %s" % config["pg"]["password"])
-    print("Pg CA file: %s" % config["pg"]["ca_file"])
+    print( f"Pg host: {config['pg']['host']}" )
+    print( f"Pg port: {config['pg']['port']}" )
+    print( f"Pg user: {config['pg']['user']}" )
+    print( f"Pg password: {config['pg']['password']}" )
+    print( f"Pg CA file: {config['pg']['ca_file']}" )
 

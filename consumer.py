@@ -25,8 +25,8 @@ kafka_consumer.subscribe([config["kafka"]["topic"]])
 for msg in kafka_consumer:
     metrics_dict = lazymetrics.LazyMetrics.bytes_to_dict(msg.value)
     pg_instance.insert_metrics(msg, metrics_dict)
-    print( "partition %s, offset %s: %s" %
-           (msg.partition, msg.offset, metrics_dict) )
+    print( f"partition {msg.partition}, " +
+           f"offset {msg.offset}: {metrics_dict}" )
 
 pg_instance.con.close()
 kafka_consumer.close()
