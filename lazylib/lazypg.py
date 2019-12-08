@@ -4,6 +4,9 @@ import datetime
 
 import psycopg2
 from psycopg2.errors import UniqueViolation
+from psycopg2.extras import DictCursor
+from psycopg2.extras import RealDictCursor
+from psycopg2.extras import NamedTupleCursor
 
 class LazyPg:
     def __init__(self, config):
@@ -136,4 +139,15 @@ class LazyPg:
             pass  # Entry is already in the DB, do nothing
         pg_cur.close()
         self.con.commit()
+
+    def get_last_metrics(self):
+        sql_template = """
+            select * from metrics order by kafka_offset desc limit 1;
+        """
+
+        pg_cur = self.con.cursor(cursor_factory=DictCursor)
+        pg_cur.execute(sql_template)
+        result = pg_cur.fetchone()
+        pg_cur.close()
+        return result;
 
